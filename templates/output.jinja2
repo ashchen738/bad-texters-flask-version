@@ -1,0 +1,189 @@
+<html lang="en">
+
+    <head>
+        <title>How Bad Is Your Texting?</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="description" content="" />
+        <link rel="icon" href="img/logo.png">
+        <link rel="stylesheet" type="text/css" href="../static/styles/styles.css" />
+        <link rel="stylesheet" media="all" href="../static/styles/setup.css" />
+        <link rel="stylesheet" media="all" href="../static/styles/says.css" />
+        <link rel="stylesheet" media="all" href="../static/styles/reply.css" />
+        <link rel="stylesheet" media="all" href="../static/styles/typing.css" />
+        <link rel="stylesheet" media="all" href="../static/styles/input.css" />
+        <meta name="theme-color" content="">
+        <meta property="og:title" content="" />
+        <meta property="og:description" content="" />
+        <meta property="og:image" content="" />
+        <meta name="twitter:card" content="">
+        <meta name="twitter:site" content="">
+        <meta name="twitter:title" content="">
+        <meta name="twitter:description" content="">
+        <meta name="twitter:image" content="">
+    </head>
+
+    <body>
+        <div id="loader"></div>
+        <div id="chat"></div>
+        <script type="text/javascript" src="../static/js/Bubbles.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                setTimeout(function () {
+                    document.getElementById("loader").remove();
+                }, 1000);
+            };
+            // initialize by constructing a named function...
+            // ...and add text processing plugin:
+            var chatWindow = new Bubbles(document.getElementById("chat"), "chatWindow", {
+                // the one that we care about is inputCallbackFn()
+                // this function returns an object with some data that we can process from user input
+                // and understand the context of it
+
+                // this is an example function that matches the text user typed to one of the answer bubbles
+                // this function does no natural language processing
+                // this is where you may want to connect this script to NLC backend.
+                inputCallbackFn: function (o) {
+                    // add error conversation block & recall it if no answer matched
+                    var miss = function () {
+                        chatWindow.talk(
+                            {
+                                "i-dont-get-it": {
+                                    says: [
+                                        "Sorry, I don't get it 😕. Pls repeat? Or you can just click below 👇"
+                                    ],
+                                    reply: o.convo[o.standingAnswer].reply
+                                }
+                            },
+                            "i-dont-get-it"
+                        )
+                    }
+
+                    // do this if answer found
+                    var match = function (key) {
+                        setTimeout(function () {
+                            chatWindow.talk(convo, key) // restart current convo from point found in the answer
+                        }, 600)
+                    }
+
+                    // sanitize text for search function
+                    var strip = function (text) {
+                        return text.toLowerCase().replace(/[\s.,\/#!$%\^&\*;:{}=\-_'"`~()]/g, "")
+                    }
+
+                    // search function
+                    var found = false
+                    o.convo[o.standingAnswer].reply.forEach(function (e, i) {
+                        strip(e.question).includes(strip(o.input)) && o.input.length > 0
+                            ? (found = e.answer)
+                            : found ? null : (found = false)
+                    })
+                    found ? match(found) : miss()
+                }
+            }) // done setting up chat-bubble
+
+            // conversation object defined separately, but just the same as in the
+            // "Basic chat-bubble Example" (1-basics.html)
+            var convo = {
+                ice: {
+                    says: ["Hi!", "I'm an A.I. trained to evaluate texting habits.", "To get started, download a copy of your Messenger data and upload a conversation below:"],
+                    reply: [
+                        {
+                            question: "Upload",
+                            answer: "uploadFunction"
+                        },
+                        {
+                            question: "Help!",
+                            answer: "help"
+                        }
+                    ]
+                },
+                "help": {
+                    says: [
+                        "Here are instructions to download your message history:",
+                        "<a href = https://www.facebook.com/help/212802592074644>https://www.facebook.com/help/212802592074644</a>",
+                    ]
+                },
+                "uploading": {
+                    says: ["Upload complete!", "Loading text history…", "Analyzing awkward conversations…", "Parsing through embarrassing moments…"]
+                },
+                "top_convo": {
+                    says: ["Wow…", "You say [most used word] way too much.", "…WAY too much.", "Here are your top 5 most used words: </br>1. [word 1] </br>2. [word 2] </br>3. [word 3]"]
+                },
+                "response_time": {
+                    says: ["Hmmm…", "Oh boy, another ghoster.", "You have an average response time of [avg response time]?!", "WHY??"],
+                    reply: [
+                        {
+                        question: "I'm busy...",
+                        answer: "sentiment"
+                        }
+                        ]
+                },
+                "sentiment": {
+                    says: ["Excuses, excuses.", "At least you're somewhat [positive/negative].", "[sentiment analysis]% to be exact.", "Quick question.", "Glass half empty or half full?"],
+                    reply: [
+                        {
+                        question: "Half empty",
+                        answer: "half-empty"
+                        },
+                        {
+                        question: "Hallf full",
+                        answer: "half-full"
+                        }
+                    ]
+                },
+                "half-empty": {
+                    says: ["One thing we can agree on…"]
+                },
+                "half-full": {
+                    says: ["Ugh. Positivity isn't my strong suit."]
+                }
+                "left_on_read": {
+                    says: ["Moving on….", "Looking through cringy jokes…", "Omg.", "OMG.", "You've left your friend on read ____ times?!", "Like on purpose?"],
+
+
+                }
+            }
+
+            var uploadFunction = function () {
+                // Create a file input
+                var file = document.createElement("input");
+                file.setAttribute("type", "file");
+                file.setAttribute("accept", ".json");
+                file.setAttribute("id", "file-selector");
+                file.setAttribute("name", "file");
+
+
+                // Add the file input to the div
+                //Class name bubble-button bubble-pick
+                var elements = document.getElementsByTagName("div");
+                for (var i = 0; i < elements.length; i++) {
+                    if (elements[i].innerHTML == "Upload") {
+                        return elements[i];
+                    }
+                }
+
+                // var form = document.createElement("form");
+                // form.setAttribute("method", "POST");
+                // form.setAttribute("enctype", "multipart/form-data");
+
+                // form.appendChild(file);
+                elements[elements.length - 1].appendChild(file);
+
+                const fileSelector = document.getElementById('file-selector');
+                fileSelector.addEventListener('change', (event) => {
+                    const fileList = event.target.files;
+                    console.log(fileList);
+                    // form.submit();
+
+                    chatWindow.talk(convo, "uploading");
+                });
+            };
+
+            // pass JSON to your function and you're done!
+
+            chatWindow.talk(convo)
+        </script>
+    </body>
+
+</html>
