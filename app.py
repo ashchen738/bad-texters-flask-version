@@ -31,8 +31,8 @@ def return_and_save_file():
     sub_scores1, sub_scores2 = backend.compile_all(li, recipient, sender)
     sub_scores1["overall_score"] = scores[0]
     sub_scores2["overall_score"] = scores[1]
-    return sub_scores1
-    # return render_template("output.jinja2", senderdict=sub_scores1, recipdict=sub_scores2)
+    # return sub_scores1
+    return render_template("output.jinja2", senderdict=sub_scores1, recipdict=sub_scores2)
     # {"overall_score":score, "common_words":list of words (choose the first one from this list),
     # "left_on_read": number, "react":number (time)), "sentiment":number(0-1), "texting_dif":number of
     # text sent and received, "avg_length":length of texts, "num_reactions":numberofreactions}
