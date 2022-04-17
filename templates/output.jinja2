@@ -6,7 +6,6 @@
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="description" content="" />
         <link rel="icon" href="img/logo.png">
-        <link rel="stylesheet" type="text/css" href="../static/styles/styles.css" />
         <link rel="stylesheet" media="all" href="../static/styles/setup.css" />
         <link rel="stylesheet" media="all" href="../static/styles/says.css" />
         <link rel="stylesheet" media="all" href="../static/styles/reply.css" />
@@ -28,11 +27,6 @@
         <div id="chat"></div>
         <script type="text/javascript" src="../static/js/Bubbles.js"></script>
         <script type="text/javascript">
-            window.onload = function () {
-                setTimeout(function () {
-                    document.getElementById("loader").remove();
-                }, 1000);
-            };
             // initialize by constructing a named function...
             // ...and add text processing plugin:
             var chatWindow = new Bubbles(document.getElementById("chat"), "chatWindow", {
